@@ -1,0 +1,87 @@
+import json
+
+# File to store tasks
+TASKS_FILE = 'tasks.json'
+
+def load_tasks():
+    try:
+        with open(TASKS_FILE, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def save_tasks(tasks):
+    with open(TASKS_FILE, 'w') as file:
+        json.dump(tasks, file, indent=4)
+
+def add_task(tasks, title, description):
+    task_id = len(tasks) + 1
+    tasks.append({
+        'id': task_id,
+        'title': title,
+        'description': description,
+        'completed': False
+    })
+    save_tasks(tasks)
+
+def view_tasks(tasks):
+    if not tasks:
+        print("No tasks available.")
+    for task in tasks:
+        status = 'Completed' if task['completed'] else 'Pending'
+        print(f"ID: {task['id']}, Title: {task['title']}, Description: {task['description']}, Status: {status}")
+
+def update_task(tasks, task_id, title=None, description=None, completed=None):
+    for task in tasks:
+        if task['id'] == task_id:
+            if title is not None:
+                task['title'] = title
+            if description is not None:
+                task['description'] = description
+            if completed is not None:
+                task['completed'] = completed
+            save_tasks(tasks)
+            return
+    print("Task not found.")
+
+def delete_task(tasks, task_id):
+    global_tasks = [task for task in tasks if task['id'] != task_id]
+    if len(global_tasks) == len(tasks):
+        print("Task not found.")
+    else:
+        save_tasks(global_tasks)
+        print(f"Task {task_id} deleted.")
+
+def main():
+    tasks = load_tasks()
+    while True:
+        print("\nTo-Do List Menu:")
+        print("1. Add Task")
+        print("2. View Tasks")
+        print("3. Update Task")
+        print("4. Delete Task")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+        
+        if choice == '1':
+            title = input("Enter task title: ")
+            description = input("Enter task description: ")
+            add_task(tasks, title, description)
+        elif choice == '2':
+            view_tasks(tasks)
+        elif choice == '3':
+            task_id = int(input("Enter task ID to update: "))
+            title = input("Enter new title (or press Enter to skip): ")
+            description = input("Enter new description (or press Enter to skip): ")
+            completed = input("Mark as completed? (yes/no): ").lower() == 'yes'
+            update_task(tasks, task_id, title if title else None, description if description else None, completed)
+        elif choice == '4':
+            task_id = int(input("Enter task ID to delete: "))
+            delete_task(tasks, task_id)
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,56 @@
+import random
+
+def choose_random_option():
+    options = ['rock', 'paper', 'scissors']
+    return random.choice(options)
+
+def decide_winner(player_choice, ai_choice):
+    if player_choice == ai_choice:
+        return "It's a draw!"
+    elif (player_choice == 'rock' and ai_choice == 'scissors') or \
+         (player_choice == 'scissors' and ai_choice == 'paper') or \
+         (player_choice == 'paper' and ai_choice == 'rock'):
+        return "You win!"
+    else:
+        return "You lose!"
+
+def show_choices(player_choice, ai_choice):
+    print(f"Your selection: {player_choice}")
+    print(f"Computer's selection: {ai_choice}")
+
+def play_game():
+    user_score = 0
+    computer_score = 0
+    
+    while True:
+        print("\nWelcome to the Rock-Paper-Scissors Game")
+        print("Enter rock, paper, or scissors:")
+        user_input = input().strip().lower()
+        
+        if user_input not in ['rock', 'paper', 'scissors']:
+            print("Invalid input. Please choose rock, paper, or scissors.")
+            continue
+        
+        computer_input = choose_random_option()
+        
+        show_choices(user_input, computer_input)
+        
+        result = decide_winner(user_input, computer_input)
+        print(result)
+        
+        if result == "You win!":
+            user_score += 1
+        elif result == "You lose!":
+            computer_score += 1
+        
+        print(f"Current Score -> You: {user_score}, Computer: {computer_score}")
+        
+        retry = input("Do you want to play another round? (yes/no): ").strip().lower()
+        if retry != 'yes':
+            break
+    
+    print("Game over!")
+    print(f"Final Score -> You: {user_score}, Computer: {computer_score}")
+
+if __name__ == "__main__":
+    play_game()
